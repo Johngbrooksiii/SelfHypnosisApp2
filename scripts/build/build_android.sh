@@ -52,6 +52,31 @@ check_dotnet() {
     fi
 }
 
+# Check if MAUI workload is installed
+check_maui_workload() {
+    print_info "Checking for .NET MAUI workload..."
+    
+    if dotnet workload list | grep -q "maui"; then
+        print_success ".NET MAUI workload found"
+        return 0
+    else
+        print_warning ".NET MAUI workload not found"
+        return 1
+    fi
+}
+
+# Install MAUI workload
+install_maui_workload() {
+    print_info "Installing .NET MAUI workload..."
+    
+    if dotnet workload install maui; then
+        print_success ".NET MAUI workload installed successfully"
+    else
+        print_error ".NET MAUI workload installation failed"
+        exit 1
+    fi
+}
+
 # Install .NET SDK using the dotnet-install.sh script
 install_dotnet() {
     print_info "Installing .NET SDK 8.0..."
@@ -114,6 +139,35 @@ build_project() {
     fi
 }
 
+# Build Android APK
+build_apk() {
+    local configuration=$1
+    print_info "Building Android APK in $configuration configuration..."
+    
+    cd "$PROJECT_ROOT/SelfHypnosisApp"
+    
+    if dotnet publish HypnosisApp.UI/HypnosisApp.UI.csproj \
+        -f net8.0-android \
+        -c "$configuration" \
+        -p:AndroidPackageFormat=apk \
+        -p:AndroidSdkDirectory="$ANDROID_SDK_ROOT" 2>/dev/null || \
+       dotnet publish HypnosisApp.UI/HypnosisApp.UI.csproj \
+        -f net8.0-android \
+        -c "$configuration" \
+        -p:AndroidPackageFormat=apk; then
+        print_success "$configuration APK build completed successfully"
+        
+        # Find and report APK location
+        local apk_path=$(find "$PROJECT_ROOT/SelfHypnosisApp/HypnosisApp.UI/bin/$configuration/net8.0-android" -name "*.apk" | head -n 1)
+        if [ -n "$apk_path" ]; then
+            print_info "APK location: $apk_path"
+        fi
+    else
+        print_warning "$configuration APK build failed (this is normal if Android SDK is not configured)"
+        print_info "Library build was successful. APK generation requires Android SDK."
+    fi
+}
+
 # Main build process
 main() {
     print_info "Starting build process..."
@@ -125,6 +179,18 @@ main() {
         install_dotnet
         check_dotnet || {
             print_error "Failed to install .NET SDK"
+            exit 1
+        }
+    fi
+    
+    echo ""
+    
+    # Check and install MAUI workload if needed
+    if ! check_maui_workload; then
+        print_warning "MAUI workload not installed. Installing now..."
+        install_maui_workload
+        check_maui_workload || {
+            print_error "Failed to install MAUI workload"
             exit 1
         }
     fi
@@ -147,11 +213,17 @@ main() {
     build_project "Release"
     echo ""
     
+    # Build Android APK (Release only)
+    print_info "Attempting to build Android APK..."
+    build_apk "Release"
+    echo ""
+    
     print_success "Build process completed successfully!"
     echo ""
-    print_info "Build artifacts location:"
-    print_info "  Debug:   $PROJECT_ROOT/SelfHypnosisApp/HypnosisApp.Core/bin/Debug/net8.0/"
-    print_info "  Release: $PROJECT_ROOT/SelfHypnosisApp/HypnosisApp.Core/bin/Release/net8.0/"
+    print_info "Build artifacts locations:"
+    print_info "  Core Library (Debug):   $PROJECT_ROOT/SelfHypnosisApp/HypnosisApp.Core/bin/Debug/net8.0/"
+    print_info "  Core Library (Release): $PROJECT_ROOT/SelfHypnosisApp/HypnosisApp.Core/bin/Release/net8.0/"
+    print_info "  Android APK (Release):  $PROJECT_ROOT/SelfHypnosisApp/HypnosisApp.UI/bin/Release/net8.0-android/"
     echo ""
     echo -e "${BLUE}================================================${NC}"
 }

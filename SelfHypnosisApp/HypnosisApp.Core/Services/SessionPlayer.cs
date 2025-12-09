@@ -6,33 +6,83 @@ public class SessionPlayer : ISessionPlayer
 {
     private readonly INarrationEngine _narrator;
     private readonly IFrequencyEngine _frequencyGen;
+    private readonly IAudioPlaybackService _audioService;
+    private CancellationTokenSource? _cancellationTokenSource;
+    private bool _isPlaying;
 
-    public SessionPlayer(INarrationEngine narrator, IFrequencyEngine frequencyGen)
+    public SessionPlayer(
+        INarrationEngine narrator, 
+        IFrequencyEngine frequencyGen,
+        IAudioPlaybackService audioService)
     {
         _narrator = narrator;
         _frequencyGen = frequencyGen;
+        _audioService = audioService;
     }
 
     public async Task PlaySessionAsync(SessionTemplate session)
     {
-        foreach (var stage in session.Stages)
+        _cancellationTokenSource = new CancellationTokenSource();
+        _isPlaying = true;
+
+        try
         {
-            Console.WriteLine($"Starting Stage: {stage.StageName} at {stage.IsochronicHz}Hz");
+            foreach (var stage in session.Stages)
+            {
+                if (_cancellationTokenSource.Token.IsCancellationRequested)
+                    break;
 
-            // 1. Generate and queue frequency audio data (needs platform-specific API call here)
-            // var toneData = _frequencyGen.GenerateIsochronicTone(200, stage.IsochronicHz, stage.DurationSeconds);
-            // PlatformAudioService.PlayBuffer(toneData); 
-            
-            // 2. Start Narration
-            await _narrator.SpeakAsync(stage.NarrationText);
+                Console.WriteLine($"Starting Stage: {stage.StageName} at {stage.IsochronicHz}Hz");
 
-            // 3. Ensure stage duration is met
-            await Task.Delay(TimeSpan.FromSeconds(stage.DurationSeconds));
+                // 1. Speak the narration first
+                if (!string.IsNullOrWhiteSpace(stage.NarrationText))
+                {
+                    await _narrator.SpeakAsync(stage.NarrationText);
+                    
+                    if (_cancellationTokenSource.Token.IsCancellationRequested)
+                        break;
+                }
+
+                // 2. Generate and play isochronic tone for the stage duration
+                // Using 200 Hz carrier frequency as specified in design docs
+                var toneData = _frequencyGen.GenerateIsochronicTone(
+                    carrierFreq: 200.0,
+                    pulseFreq: stage.IsochronicHz,
+                    durationSeconds: stage.DurationSeconds);
+
+                // Play the tone (this will block until complete or cancelled)
+                await _audioService.PlayPCMBufferAsync(
+                    toneData, 
+                    sampleRate: 44100, 
+                    _cancellationTokenSource.Token);
+            }
+        }
+        catch (OperationCanceledException)
+        {
+            Console.WriteLine("Session cancelled by user");
+        }
+        finally
+        {
+            _isPlaying = false;
         }
     }
 
     public void StopSession()
     {
-        // TODO: Implement stopping all audio playback
+        if (!_isPlaying)
+            return;
+
+        Console.WriteLine("Stopping session...");
+        
+        // Cancel the playback
+        _cancellationTokenSource?.Cancel();
+        
+        // Stop narration
+        _narrator.Stop();
+        
+        // Stop all audio playback
+        _audioService.StopAllAudioAsync().Wait();
+        
+        _isPlaying = false;
     }
 }

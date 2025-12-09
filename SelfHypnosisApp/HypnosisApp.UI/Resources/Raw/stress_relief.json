@@ -1,0 +1,46 @@
+{
+  "Title": "Stress Relief Session",
+  "Description": "A 20-minute guided session for deep relaxation and stress reduction using progressive brainwave entrainment",
+  "Stages": [
+    {
+      "StageName": "Induction",
+      "NarrationText": "Welcome to your stress relief session. Find a comfortable position, either sitting or lying down. Close your eyes and take a deep breath in through your nose, hold it for a moment, and slowly exhale through your mouth. With each breath, feel yourself becoming more and more relaxed. Let go of any tension in your body. You are safe, you are calm, and you are ready to begin this journey of deep relaxation.",
+      "DurationSeconds": 180,
+      "TargetFrequency": "Alpha",
+      "IsochronicHz": 10.0,
+      "AmbientTrackFilename": ""
+    },
+    {
+      "StageName": "Deepening",
+      "NarrationText": "Now, imagine yourself at the top of a beautiful staircase with ten steps leading down to a place of complete peace and tranquility. With each step you take, you will feel twice as relaxed as you did on the step before. Ten, beginning to relax. Nine, going deeper. Eight, feeling peaceful. Seven, letting go. Six, deeply calm. Five, halfway there. Four, so relaxed. Three, almost there. Two, nearly complete. One, you have arrived at your special place of deep relaxation.",
+      "DurationSeconds": 240,
+      "TargetFrequency": "Theta",
+      "IsochronicHz": 6.0,
+      "AmbientTrackFilename": ""
+    },
+    {
+      "StageName": "Therapeutic Suggestion",
+      "NarrationText": "In this deeply relaxed state, you are open to positive change. Stress and tension are leaving your body with each breath. You are capable, you are strong, and you handle challenges with ease and grace. Your mind is clear and focused. Your body knows how to heal and restore itself. When you face stressful situations, you remain calm and centered. You choose peace over worry. You trust in your ability to handle whatever comes your way. These positive thoughts are becoming a natural part of who you are.",
+      "DurationSeconds": 360,
+      "TargetFrequency": "Theta",
+      "IsochronicHz": 5.0,
+      "AmbientTrackFilename": ""
+    },
+    {
+      "StageName": "Reorientation",
+      "NarrationText": "In a moment, you will begin to return to your normal waking state, bringing with you all the benefits of this deep relaxation. You will feel refreshed, renewed, and energized. Begin to notice the room around you. Wiggle your fingers and toes. Take a deep, energizing breath. When you're ready, slowly open your eyes, feeling alert, aware, and wonderful in every way.",
+      "DurationSeconds": 120,
+      "TargetFrequency": "Alpha",
+      "IsochronicHz": 10.0,
+      "AmbientTrackFilename": ""
+    },
+    {
+      "StageName": "Awakening",
+      "NarrationText": "You are now fully awake and alert. You feel calm, centered, and ready to continue your day with renewed energy and a peaceful mind. The benefits of this session will continue to support you throughout your day. Take a moment to stretch and notice how good you feel. Thank you for taking this time for yourself.",
+      "DurationSeconds": 60,
+      "TargetFrequency": "Alpha",
+      "IsochronicHz": 12.0,
+      "AmbientTrackFilename": ""
+    }
+  ]
+}

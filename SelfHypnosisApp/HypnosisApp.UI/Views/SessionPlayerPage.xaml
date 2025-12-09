@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:HypnosisApp.UI.ViewModels"
+             x:Class="HypnosisApp.UI.Views.SessionPlayerPage"
+             x:DataType="vm:SessionPlayerViewModel"
+             Title="Session Player"
+             Shell.NavBarIsVisible="False">
+
+    <Grid RowDefinitions="Auto,*,Auto" Padding="20" BackgroundColor="#1a1a2e">
+        
+        <!-- Header -->
+        <VerticalStackLayout Grid.Row="0" Spacing="10" Margin="0,40,0,20">
+            <Label Text="{Binding Session.Title}"
+                   FontSize="28"
+                   FontAttributes="Bold"
+                   HorizontalOptions="Center"
+                   TextColor="White" />
+            <Label Text="{Binding Session.Description}"
+                   FontSize="16"
+                   HorizontalOptions="Center"
+                   TextColor="LightGray" />
+        </VerticalStackLayout>
+
+        <!-- Content Area -->
+        <VerticalStackLayout Grid.Row="1" 
+                           Spacing="30"
+                           VerticalOptions="Center"
+                           HorizontalOptions="Center">
+            
+            <!-- Status Display -->
+            <Frame Padding="30" 
+                   CornerRadius="20" 
+                   BackgroundColor="#16213e"
+                   HasShadow="False">
+                <VerticalStackLayout Spacing="15">
+                    <Label Text="{Binding StatusMessage}"
+                           FontSize="18"
+                           HorizontalOptions="Center"
+                           TextColor="White" />
+                    
+                    <Label Text="{Binding CurrentStage}"
+                           FontSize="16"
+                           HorizontalOptions="Center"
+                           TextColor="LightBlue"
+                           IsVisible="{Binding IsPlaying}" />
+                    
+                    <ProgressBar Progress="{Binding Progress}"
+                               IsVisible="{Binding IsPlaying}"
+                               ProgressColor="LightBlue" />
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- Play/Stop Indicator -->
+            <ActivityIndicator IsRunning="{Binding IsPlaying}"
+                             IsVisible="{Binding IsPlaying}"
+                             Color="LightBlue"
+                             WidthRequest="60"
+                             HeightRequest="60" />
+        </VerticalStackLayout>
+
+        <!-- Control Buttons -->
+        <VerticalStackLayout Grid.Row="2" Spacing="15" Margin="0,0,0,20">
+            <Button Text="Start Session"
+                    Command="{Binding StartSessionCommand}"
+                    IsEnabled="{Binding IsPlaying, Converter={StaticResource InvertedBoolConverter}}"
+                    BackgroundColor="#0f3460"
+                    TextColor="White"
+                    FontSize="18"
+                    HeightRequest="60"
+                    CornerRadius="15" />
+            
+            <Button Text="Stop Session"
+                    Command="{Binding StopSessionCommand}"
+                    IsEnabled="{Binding IsPlaying}"
+                    BackgroundColor="#e94560"
+                    TextColor="White"
+                    FontSize="18"
+                    HeightRequest="60"
+                    CornerRadius="15" />
+            
+            <Button Text="Back to Sessions"
+                    Command="{Binding GoBackCommand}"
+                    BackgroundColor="Transparent"
+                    TextColor="LightGray"
+                    BorderColor="Gray"
+                    BorderWidth="1"
+                    FontSize="16"
+                    HeightRequest="50"
+                    CornerRadius="15" />
+        </VerticalStackLayout>
+    </Grid>
+
+</ContentPage>
