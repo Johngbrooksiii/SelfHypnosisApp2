@@ -29,7 +29,7 @@ jobs:
       - name: Publish APK artifact
         uses: actions/upload-artifact@v3
         with:
-          name: maui-apk
+          name: maui-apk-v${{ github.run_number }}
           path: |
             **/bin/Release/net8.0-android/*.apk
 
