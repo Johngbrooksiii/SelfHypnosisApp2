@@ -25,7 +25,7 @@ jobs:
       run: dotnet publish src/SelfHypnosisApp -f net8.0-android -c Release
 
     - name: Upload APK artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: SelfHypnosisApp2-APK
         path: src/SelfHypnosisApp/bin/Release/net8.0-android/publish/*.apk
