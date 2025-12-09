@@ -1,4 +1,4 @@
-name: MAUI Build
+name: Dual Build Pipeline
 
 on:
   push:
@@ -22,3 +22,11 @@ jobs:
 
       - name: Build MAUI project
         run: dotnet build YourMauiProject.csproj -c Release
+
+  backend-scripts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Run automation scripts
+        run: ./scripts/run.sh
