@@ -1,0 +1,31 @@
+name: Build MAUI Android App
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v3
+
+    - name: Install .NET SDK
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: Install MAUI workload
+      run: dotnet workload install maui
+
+    - name: Build Android APK
+      run: dotnet publish src/SelfHypnosisApp -f net8.0-android -c Release
+
+    - name: Upload APK artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: SelfHypnosisApp2-APK
+        path: src/SelfHypnosisApp/bin/Release/net8.0-android/publish/*.apk
