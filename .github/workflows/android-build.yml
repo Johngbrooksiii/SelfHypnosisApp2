@@ -1,4 +1,4 @@
-name: Build MAUI Android App
+name: Build Android APK
 
 on:
   workflow_dispatch:
@@ -13,19 +13,20 @@ jobs:
     - name: Checkout repo
       uses: actions/checkout@v3
 
-    - name: Install .NET SDK
-      uses: actions/setup-dotnet@v3
+    - name: Set up JDK
+      uses: actions/setup-java@v3
       with:
-        dotnet-version: '8.0.x'
+        distribution: 'temurin'
+        java-version: '17'
 
-    - name: Install MAUI workload
-      run: dotnet workload install maui
+    - name: Make gradlew executable
+      run: chmod +x ./gradlew
 
-    - name: Build Android APK
-      run: dotnet publish src/SelfHypnosisApp -f net8.0-android -c Release
+    - name: Build Debug APK
+      run: ./gradlew assembleDebug
 
     - name: Upload APK artifact
       uses: actions/upload-artifact@v4
       with:
-        name: SelfHypnosisApp2-APK
-        path: src/SelfHypnosisApp/bin/Release/net8.0-android/publish/*.apk
+        name: SelfHypnosisApp2-debug
+        path: app/build/outputs/apk/debug/*.apk
